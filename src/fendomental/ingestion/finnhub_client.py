@@ -14,6 +14,7 @@ import datetime
 import requests
 
 from config.settings import settings
+from fendomental.common.redact import redact_secrets
 from fendomental.common.time_utils import monday_of_week
 from fendomental.domain.dto import EarningsEventDTO
 from fendomental.domain.enums import EarningsSession
@@ -48,7 +49,13 @@ def _get_earnings_for_symbol(
         "symbol": symbol,
         "token": settings.finnhub_api_key,
     }
-    response = requests.get(BASE_URL, params=params, timeout=30)
+    try:
+        response = requests.get(BASE_URL, params=params, timeout=30)
+    except requests.exceptions.RequestException as exc:
+        # str(exc) on a connection-level failure (proxy/DNS/TLS) embeds the full
+        # request URL including token=... — never let that reach job_run_log raw.
+        raise FinnhubApiError(redact_secrets(str(exc))) from None
+
     if response.status_code != 200:
         raise FinnhubApiError(
             f"Finnhub calendar/earnings ({symbol}) returned HTTP {response.status_code}: {response.text[:500]}"

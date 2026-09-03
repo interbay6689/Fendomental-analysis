@@ -11,6 +11,7 @@ import datetime
 import requests
 
 from config.settings import settings
+from fendomental.common.redact import redact_secrets
 from fendomental.common.time_utils import monday_of_week
 from fendomental.domain.dto import EconomicEventDTO
 
@@ -33,7 +34,13 @@ def get_economic_calendar(start_date: datetime.date, end_date: datetime.date) ->
         "to": end_date.isoformat(),
         "apikey": settings.fmp_api_key,
     }
-    response = requests.get(BASE_URL, params=params, timeout=30)
+    try:
+        response = requests.get(BASE_URL, params=params, timeout=30)
+    except requests.exceptions.RequestException as exc:
+        # str(exc) on a connection-level failure (proxy/DNS/TLS) embeds the full
+        # request URL including apikey=... — never let that reach job_run_log raw.
+        raise FmpApiError(redact_secrets(str(exc))) from None
+
     if response.status_code != 200:
         raise FmpApiError(f"FMP economic_calendar returned HTTP {response.status_code}: {response.text[:500]}")
 
