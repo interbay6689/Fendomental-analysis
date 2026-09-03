@@ -20,3 +20,20 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+# SPEC.md section 7, risk #2: fixed symbol list for the earnings calendar
+# (Mag7 + leading tech names materially relevant to NQ), deliberately NOT
+# derived dynamically from an index-membership API.
+EARNINGS_WATCHLIST_SYMBOLS: tuple[str, ...] = (
+    "AAPL",
+    "MSFT",
+    "GOOGL",
+    "AMZN",
+    "NVDA",
+    "META",
+    "TSLA",
+    "AVGO",
+    "AMD",
+    "NFLX",
+)
+
