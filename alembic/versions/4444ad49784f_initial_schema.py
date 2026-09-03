@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: 9a612804e5c0
+Revision ID: 4444ad49784f
 Revises: 
-Create Date: 2026-09-03 07:37:29.733655
+Create Date: 2026-09-03 07:48:52.917678
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '9a612804e5c0'
+revision: str = '4444ad49784f'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -120,7 +120,7 @@ def upgrade() -> None:
     sa.Column('confidence_score', sa.Float(), nullable=True),
     sa.Column('confidence_level', sa.String(length=16), nullable=True),
     sa.Column('uncertainty_source', sa.Text(), nullable=True),
-    sa.Column('key_catalysts_json', sa.JSON(), nullable=False),
+    sa.Column('key_catalysts_json', sa.JSON(), server_default=sa.text("'[]'"), nullable=False),
     sa.Column('rationale', sa.Text(), nullable=True),
     sa.Column('reference_price', sa.Float(), nullable=True),
     sa.Column('reference_price_ts_utc', sa.DateTime(timezone=True), nullable=True),

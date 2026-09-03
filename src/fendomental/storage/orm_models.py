@@ -64,7 +64,7 @@ class DailyForecast(Base):
     confidence_score: Mapped[float | None] = mapped_column(Float)
     confidence_level: Mapped[str | None] = mapped_column(String(16))
     uncertainty_source: Mapped[str | None] = mapped_column(Text)
-    key_catalysts_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    key_catalysts_json: Mapped[list[str]] = mapped_column(JSON, nullable=False, server_default=text("'[]'"))
     rationale: Mapped[str | None] = mapped_column(Text)
     reference_price: Mapped[float | None] = mapped_column(Float)
     reference_price_ts_utc: Mapped[datetime.datetime | None] = mapped_column(DateTime(timezone=True))
